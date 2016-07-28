@@ -29,7 +29,8 @@ class FBG {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
         'cookie': this.cookie
       },
-      formData: payload || undefined
+      formData: payload || undefined,
+      qs: this.qs || undefined
     }, (error, response, body) => cb(error, body))
   }
 
@@ -63,6 +64,13 @@ class FBG {
     client.fetch()
   }
 
+  _composerUrl (payload, cb) {
+    const { url, fbDtsg } = payload
+    this.url = 'https://www.facebook.com/react_composer/scraper/'
+    this.qs = { composer_id: 'rc.js_0', target_id: this.gid, scrape_url: url, entry_point: 'group' }
+    this._r({ '__a': 1, 'fb_dtsg': fbDtsg }, cb)
+  }
+
   post (payload, cb) {
     const { gid, message, url } = payload
 
@@ -93,7 +101,13 @@ class FBG {
             'attachment[type]': 100
           }
 
-          this._r(Object.assign(payload, attachment), (e, r) => cb(e, r))
+          this._composerUrl({ url: r.url, fbDtsg: value }, (e, r) => {
+            if (e) return cb(e)
+
+            this.url = 'https://www.facebook.com/ajax/updatestatus.php'
+            this.qs = undefined
+            this._r(Object.assign(payload, attachment), cb)
+          })
         })
       } else {
         this._r(payload, (e, r) => cb(e, r))
