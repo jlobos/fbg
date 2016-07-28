@@ -49,7 +49,7 @@ $ npm i fbg
 
 ## Testing
 
-> Setup: set env var (C_USER, XS, GID)
+> Setup: set env var (USER_ID, XS, GID)
 
 ```
 $ npm install
