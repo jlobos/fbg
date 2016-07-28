@@ -35,9 +35,7 @@ class FBG {
   }
 
   _getFbDtsg (gid, cb) {
-    (!cb) ? cb = gid : this.gid = gid
-
-    this.url = `https://www.facebook.com/groups/${this.gid}`
+    this.url = `https://www.facebook.com/groups/${gid}`
     this.method = 'GET'
     this._r((error, body) => {
       if (error) return cb(error)
@@ -65,17 +63,17 @@ class FBG {
   }
 
   _composerUrl (payload, cb) {
-    const { url, fbDtsg } = payload
+    const { url, fbDtsg, gid } = payload
     this.url = 'https://www.facebook.com/react_composer/scraper/'
-    this.qs = { composer_id: 'rc.js_0', target_id: this.gid, scrape_url: url, entry_point: 'group' }
+    this.qs = { composer_id: 'rc.js_0', target_id: gid, scrape_url: url, entry_point: 'group' }
     this._r({ '__a': 1, 'fb_dtsg': fbDtsg }, cb)
   }
 
   post (payload, cb) {
-    const { gid, message, url } = payload
+    let { gid, message, url } = payload
+    gid = gid || this.gid
 
-    this.gid = gid || this.gid
-    this._getFbDtsg((e, value) => {
+    this._getFbDtsg(gid, (e, value) => {
       if (e) return cb(e)
 
       this.url = 'https://www.facebook.com/ajax/updatestatus.php'
@@ -84,7 +82,7 @@ class FBG {
       const payload = {
         'xhpc_message': message,
         'xhpc_composerid': 'rc.js_11',
-        'xhpc_targetid': this.gid,
+        'xhpc_targetid': gid,
         '__a': 1,
         'fb_dtsg': value
       }
@@ -101,7 +99,7 @@ class FBG {
             'attachment[type]': 100
           }
 
-          this._composerUrl({ url: r.url, fbDtsg: value }, (e, r) => {
+          this._composerUrl({ url: r.url, fbDtsg: value, gid: gid }, (e, r) => {
             if (e) return cb(e)
 
             this.url = 'https://www.facebook.com/ajax/updatestatus.php'
