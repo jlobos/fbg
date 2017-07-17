@@ -1,57 +1,43 @@
-> Facebook API not allow post in public groups but this lib yes!! :blush:
+# fbg
+
+> Post in Facebook Groups
+
+## Install
+
+```bash
+$ npm install --save fbg
+```
+
+## Usage
 
 ```js
-import fbg from 'fbg'
+const post = require('fbg')
 
 // uid: in chrome F12 -> Application -> Cookies -> c_user
-// xs: in chrome F12 -> Application -> Cookies -> xs
+// xs:  in chrome F12 -> Application -> Cookies -> xs
 
-const group = fbg({ uid: 'xxx', xs: 'xxx' })
+// Simple Message
+post(
+  {gid: '290490644635011', message: 'post from nodejs'},
+  {uid: 'xxx', xs: 'xxx'}
+).then(console.log)
 
-// simple message
-
-group.post({
-  gid: 290490644635011,
-  message: 'post from nodejs'
-}, (e, r) => { if (e) console.error(e) })
-
-// post link include meta tag
-
-group.post({
-  gid: 290490644635011,
-  message: 'post from nodejs',
-  url: 'https://www.npmjs.com'
-}, (e, r) => { if (e) console.error(e) })
+// Post URL
+post(
+  {
+    gid: '290490644635011',
+    message: 'post from nodejs',
+    ogp: {
+      title: 'npm',
+      summary: 'npm is the package manager for javascript',
+      image: 'https://www.npmjs.com/static/images/touch-icons/open-graph.png',
+      url: 'https://www.npmjs.com/'
+    }
+  },
+  {uid: 'xxx', xs: 'xxx'}
+).then(console.log)
 ```
 
-> If only one group
+## License
 
-```js
-import fbg from 'fbg'
-
-const group = fbg({ uid: 'xxx', xs: 'xxx', gid: 290490644635011 })
-
-group.post({
-  message: 'post from nodejs'
-}, (e, r) => { if (e) console.error(e) })
-```
-
-## Installation
-
-```
-$ npm i fbg
-```
-
-## Features
-
-  * No email and pass required
-  * Support post url in groups adding meta tags
-
-## Testing
-
-> Setup: set env var (USER_ID, XS, GID)
-
-```
-$ npm install
-$ npm test
-```
+MIT © [Jesus Lobos](https://jlobos.com/)
